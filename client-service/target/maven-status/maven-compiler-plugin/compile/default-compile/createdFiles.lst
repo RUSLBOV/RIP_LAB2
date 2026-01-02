@@ -1,0 +1,8 @@
+com\example\clientservice\model\ScoringResponse.class
+com\example\clientservice\config\WebClientConfig.class
+com\example\clientservice\model\NewsArticle.class
+com\example\clientservice\filter\LoggingFilter.class
+com\example\clientservice\model\ScoringRequest.class
+com\example\clientservice\controller\ClientController.class
+com\example\clientservice\service\NewsClientService.class
+com\example\clientservice\ClientApplication.class

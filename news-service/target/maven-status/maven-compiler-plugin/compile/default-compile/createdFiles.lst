@@ -1,0 +1,7 @@
+com\example\newsservice\model\ScoringResponse.class
+com\example\newsservice\filter\LoggingFilter.class
+com\example\newsservice\model\ScoringRequest.class
+com\example\newsservice\NewsApplication.class
+com\example\newsservice\model\NewsArticle.class
+com\example\newsservice\controller\NewsController.class
+com\example\newsservice\service\NewsScoringService.class
