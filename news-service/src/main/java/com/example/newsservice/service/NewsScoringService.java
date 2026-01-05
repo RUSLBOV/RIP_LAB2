@@ -68,14 +68,11 @@ public class NewsScoringService {
         "The sound design pushes boundaries of traditional expectations."
     );
 
-    // 🔥 НЕОПТИМАЛЬНАЯ ЛОГИКА: ГЕНЕРАЦИЯ + SCORING
     public Mono<ScoringResponse> scoreArticles(String topic) {
-        // Шаг 1: Сгенерировать 50 000 статей — каждый запрос!
         List<NewsArticle> articles = generateFakeArticles(50_000);
 
         long startTime = System.currentTimeMillis();
 
-        // Шаг 2: Оценить КАЖДУЮ статью через NAIVE scoring (вложенные циклы!)
         List<NewsArticle> scored = new ArrayList<>();
         for (NewsArticle article : articles) {
             double score = computeNaiveScore(topic, article); // <-- ОСНОВНАЯ НАГРУЗКА
@@ -93,10 +90,10 @@ public class NewsScoringService {
             }
         }
 
-        // Шаг 3: Сортировка — ещё O(n log n)
+        //  Сортировка — ещё O(n log n)
         scored.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
 
-        // Шаг 4: Агрегация метрик
+        // Агрегация метрик
         double topScore = scored.isEmpty() ? 0.0 : scored.get(0).getScore();
         double avgScore = scored.stream().mapToDouble(NewsArticle::getScore).average().orElse(0.0);
         List<NewsArticle> top10 = scored.stream().limit(10).collect(Collectors.toList());
@@ -116,23 +113,23 @@ public class NewsScoringService {
         ));
     }
 
-    // 🔥 НЕОПТИМАЛЬНЫЙ TOKENIZER: каждый вызов — новый regex + split
+    //НЕОПТИМАЛЬНЫЙ TOKENIZER: каждый вызов — новый regex + split
     private List<String> tokenizeNaive(String text) {
         if (text == null || text.trim().isEmpty()) return Collections.emptyList();
 
-        // ❗ Каждый раз создаётся Pattern+Matcher! Нет кэширования.
+        //Каждый раз создаётся Pattern+Matcher! Нет кэширования.
         String cleaned = text.toLowerCase()
                 .replaceAll("[^a-zA-Z0-9\\s]", " ") // квадратные скобки — каждый раз!
                 .replaceAll("\\s+", " ")           // ещё один regex!
                 .trim();
 
-        // ❗ split() без проверки на пустоту
+        // split() без проверки на пустоту
         return Arrays.stream(cleaned.split(" "))
                 .filter(word -> word.length() >= 2) // нет stop-words!
                 .collect(Collectors.toList());
     }
 
-    // 🔥 NAIVE BAG-OF-WORDS: O(|topic| × |title| × |content|) — вложенные циклы!
+    //  вложенные циклы!
     private double computeNaiveScore(String topic, NewsArticle article) {
         List<String> topicWords = tokenizeNaive(topic);
         List<String> titleWords = tokenizeNaive(article.getTitle());
@@ -141,7 +138,7 @@ public class NewsScoringService {
         int titleMatches = 0;
         int contentMatches = 0;
 
-        // ❗ ВЛОЖЕННЫЕ ЦИКЛЫ — главный источник неоптимальности
+        //  ВЛОЖЕННЫЕ ЦИКЛЫ — главный источник неоптимальности
         for (String tWord : topicWords) {
             for (String tw : titleWords) {
                 if (tWord.equals(tw)) {
@@ -155,7 +152,7 @@ public class NewsScoringService {
             }
         }
 
-        // ❗ "Сложная" формула с дублирующими вычислениями
+        //  "Сложная" формула с дублирующими вычислениями
         double rawScore = titleMatches * 3.0 + contentMatches * 1.0;
 
         // Повторная токенизация — для penalty! (намеренно)

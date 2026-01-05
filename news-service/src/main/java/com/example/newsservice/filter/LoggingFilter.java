@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class LoggingFilter implements WebFilter {
 
-    // ✅ Явное создание логгера — без Lombok
     private static final Logger log = LoggerFactory.getLogger(LoggingFilter.class);
 
     @Override
