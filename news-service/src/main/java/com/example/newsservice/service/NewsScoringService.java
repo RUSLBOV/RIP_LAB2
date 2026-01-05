@@ -23,7 +23,7 @@ public class NewsScoringService {
 
     private static final Logger log = LoggerFactory.getLogger(NewsScoringService.class);
 //fwfws Fs
-    // Больше шаблонов для разнообразия (20 шт)
+    // Больше шаблонов для разнообразия (+-20 шт)
     private static final List<String> TEMPLATES = Arrays.asList(
         "Breaking: %s festival announced in Berlin with over 50 performers",
         "How %s changed my life — a personal story of transformation",
@@ -75,7 +75,7 @@ public class NewsScoringService {
 
         List<NewsArticle> scored = new ArrayList<>();
         for (NewsArticle article : articles) {
-            double score = computeNaiveScore(topic, article); // <-- ОСНОВНАЯ НАГРУЗКА
+            double score = computeNaiveScore(topic, article); // TYT ОСНОВНАЯ НАГРУЗКА
             if (score > 0.001) { // отсекаем совсем нерелевантные
                 NewsArticle copy = new NewsArticle();
                 copy.setId(article.getId());

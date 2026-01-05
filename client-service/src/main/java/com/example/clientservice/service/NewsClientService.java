@@ -1,17 +1,19 @@
 package com.example.clientservice.service;
 
-import com.example.clientservice.model.NewsArticle;
-import com.example.clientservice.model.ScoringRequest;
-import com.example.clientservice.model.ScoringResponse;
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.example.clientservice.model.NewsArticle;
+import com.example.clientservice.model.ScoringRequest;
+import com.example.clientservice.model.ScoringResponse;
+
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
-
-import java.time.Duration;
 
 @Service
 public class NewsClientService {
@@ -47,7 +49,7 @@ public class NewsClientService {
     private double recalculateAverage(ScoringResponse response) {
         if (response.getTopArticles().isEmpty()) return 0.0;
         double sum = 0;
-        for (NewsArticle article : response.getTopArticles()) {  // ← будет работать, если getTopArticles() → List<NewsArticle>
+        for (NewsArticle article : response.getTopArticles()) {  
             sum += article.getScore();
         }
         return sum / response.getTopArticles().size();
@@ -59,7 +61,7 @@ public class NewsClientService {
                 .bodyValue(new ScoringRequest(topic))
                 .retrieve()
                 .onStatus(
-                    HttpStatusCode::isError,  // ✅ Правильно для Spring Boot 3.1.5
+                    HttpStatusCode::isError,  
                     response -> Mono.error(new RuntimeException("News service error: " + response.statusCode()))
                 )
                 .bodyToMono(ScoringResponse.class)
